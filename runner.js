@@ -9,7 +9,8 @@ export default class GameRunner {
         colorButton,
         initialBoard,
         player1,
-        player2
+        player2,
+        canFlip
     ) {
         this.status = 0;
         this.initialBoard = initialBoard;
@@ -18,11 +19,17 @@ export default class GameRunner {
         this.colorButton = colorButton;
         this.started = false;
         this.selectedPiece = null;
+        this.canFlip = canFlip;
 
         this.messagePromises = [];
         this.worker = new Worker('ai.js');
 
-        this.players = [player1, player2];
+        console.log(Math.random());
+        if (this.canFlip && Math.random() < 0.5) {
+            this.players = [player2, player1];
+        } else {
+            this.players = [player1, player2];
+        }
 
         this.worker.onmessage = (e) => {
             let result = e.data;
@@ -46,6 +53,7 @@ export default class GameRunner {
 
         this.initialBoard = initialBoard;
         this.board = Array.from(initialBoard);
+
         this.refreshColors();
     }
 
@@ -108,12 +116,13 @@ export default class GameRunner {
 
     handleStartOrRestart() {
         if (this.started) {
+            this.startButton.innerText = 'Start';
             this.boardHandler.setHighlights([]);
             this.abortGameRun();
             this.started = false;
             this.board = Array.from(this.initialBoard);
 
-            if (this.status != 0) {
+            if (this.status != 0 && this.canFlip) {
                 this.swapColors();
             }
 
@@ -204,6 +213,7 @@ export default class GameRunner {
     }
 
     async runGame(color) {
+        this.startButton.innerText = 'Restart';
         await this.invokeWorker('initGame');
         this.boardHandler.renderBoard(this.board);
 
@@ -281,6 +291,7 @@ export default class GameRunner {
             this.status = await this.invokeWorker('checkStatus', this.board, 1 - color);
         }
 
+        this.startButton.innerText = 'Game Over';
         this.renderStatus(this.status)
     }
 }
