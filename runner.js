@@ -259,12 +259,17 @@ export default class GameRunner {
                 }
                 move = (dy * 6 + dx) * 36 + sy * 6 + sx;
             } else {
+                let minimumWait = new Promise(resolve => setTimeout(resolve, 400));
                 move = await this.invokeWorker(
                     'getBestMove',
                     this.board,
                     1 - color,
                     color
                 );
+                // Don't make a move immediately if we have an obvious one,
+                // take an additional second to "think" in order to make it
+                // look natural
+                await minimumWait;
             }
 
             let source = move % 36;
