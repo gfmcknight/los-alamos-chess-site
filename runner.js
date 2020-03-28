@@ -10,7 +10,8 @@ export default class GameRunner {
         initialBoard,
         player1,
         player2,
-        canFlip
+        canFlip,
+        mainMenuCallback
     ) {
         this.status = 0;
         this.initialBoard = initialBoard;
@@ -45,11 +46,14 @@ export default class GameRunner {
         this.boardHandler.onClick((x, y) => this.handleClick(x, y));
         this.startButton.onclick = () => this.handleStartOrRestart();
         this.colorButton.onclick = () => {
-            if (!this.started) {
+            if (!this.started && this.canFlip) {
                 this.swapColors();
             }
         }
-        this.hintButton.onclick = () => alert('Hints are not yet supported');
+        this.hintButton.onclick = () => {
+            this.abortGameRun();
+            mainMenuCallback();
+        };
 
         this.initialBoard = initialBoard;
         this.board = Array.from(initialBoard);

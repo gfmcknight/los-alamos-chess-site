@@ -190,7 +190,7 @@ function transitionToGame(playerA, playerB, board, colorSwitch) {
     hintAndStartHolder.appendChild(startButton);
 
     let hintButton = document.createElement('button');
-    hintButton.innerText = 'Hint';
+    hintButton.innerText = 'Exit';
     hintButton.className = 'hintButton';
     hintAndStartHolder.appendChild(hintButton);
 
@@ -200,6 +200,10 @@ function transitionToGame(playerA, playerB, board, colorSwitch) {
         .getElementById('content')
         .appendChild(buttonsHolder);
 
+    let gameExit = () => doTransition(
+        () => transitionToMain()
+    );
+
     let runner = new GameRunner(
         boardHandler,
         startButton,
@@ -208,7 +212,8 @@ function transitionToGame(playerA, playerB, board, colorSwitch) {
         board,
         playerA,
         playerB,
-        colorSwitch
+        colorSwitch,
+        gameExit
     );
 }
 
@@ -345,6 +350,190 @@ function transitionToMain() {
                 11, 7, 19, 15, 7, 11
             ],
             true
+        )
+    );
+    contentElement.appendChild(button);
+
+    button = document.createElement('button');
+    button.className = 'playModeButton buttonExtra';
+    button.innerText = 'Other fun things to do';
+    button.onclick = () => doTransition(
+        () => transitionToExtras()
+    );
+    contentElement.appendChild(button);
+
+    document.getElementById('content').appendChild(contentElement);
+}
+
+function transitionToExtras() {
+    let contentElement = document
+        .createElement('div');
+    contentElement.className = 'menuHolder';
+
+    contentElement.appendChild(
+        document.createTextNode('Fun variants')
+    );
+
+    let button = document.createElement('button');
+    button.className = 'playModeButton buttonA';
+    button.innerText = 'Many Kings';
+    button.onclick = () => doTransition(
+        () => transitionToGame(
+            'Player',
+            'Awesome',
+            [
+                10, 6, 18, 18, 6, 10,
+                2, 2, 2, 2, 2, 2,
+                0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0,
+                3, 3, 3, 3, 3, 3,
+                11, 7, 19, 19, 7, 11
+            ],
+            true
+        )
+    );
+    contentElement.appendChild(button);
+
+    button = document.createElement('button');
+    button.className = 'playModeButton buttonB';
+    button.innerText = 'Knights of the round table';
+    button.onclick = () => doTransition(
+        () => transitionToGame(
+            'Player',
+            'Awesome',
+            [
+                6, 6, 18, 6, 6, 6,
+                2, 2, 2, 2, 2, 2,
+                0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0,
+                3, 3, 3, 3, 3, 3,
+                7, 7, 7, 19, 7, 7
+            ],
+            true
+        )
+    );
+    contentElement.appendChild(button);
+
+    button = document.createElement('button');
+    button.className = 'playModeButton buttonC';
+    button.innerText = 'Reverse Chess';
+    button.onclick = () => doTransition(
+        () => transitionToGame(
+            'Player',
+            'Awesome',
+            [
+                11, 7, 19, 15, 7, 11,
+                3, 3, 3, 3, 3, 3,
+                0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0,
+                2, 2, 2, 2, 2, 2,
+                10, 6, 18, 14, 6, 10
+            ],
+            true
+        )
+    );
+    contentElement.appendChild(button);
+
+    button = document.createElement('button');
+    button.className = 'playModeButton buttonD';
+    button.innerText = 'Bishops';
+    button.onclick = () => doTransition(
+        () => transitionToGame(
+            'Player',
+            'Awesome',
+            [
+                10, 8, 18, 14, 8, 10,
+                2, 2, 2, 2, 2, 2,
+                0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0,
+                3, 3, 3, 3, 3, 3,
+                11, 9, 19, 15, 9, 11
+            ],
+            true
+        )
+    );
+    contentElement.appendChild(button);
+
+    button = document.createElement('button');
+    button.className = 'playModeButton buttonE';
+    button.innerText = 'Chaos';
+    button.onclick = () => doTransition(
+        () => transitionToGame(
+            'Player',
+            'Awesome',
+            [
+                10, 12, 18, 16, 12, 10,
+                4, 4, 4, 4, 4, 4,
+                0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0,
+                4, 4, 4, 4, 4, 4,
+                11, 13, 19, 17, 13, 11
+            ],
+            true
+        )
+    );
+    contentElement.appendChild(button);
+
+    contentElement.appendChild(
+        document.createTextNode('Challenges')
+    );
+
+    button = document.createElement('button');
+    button.className = 'playModeButton buttonA';
+    button.innerText = 'Defensive Fort';
+    button.onclick = () => doTransition(
+        () => transitionToGame(
+            'Player',
+            'Challenge',
+            [
+                10, 6, 18, 14, 6, 10,
+                2, 2, 2, 2, 2, 2,
+                0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0,
+                5, 5, 5, 5, 5, 5,
+                11, 11, 19, 7, 11, 11
+            ],
+            false
+        )
+    );
+    contentElement.appendChild(button);
+
+    button = document.createElement('button');
+    button.className = 'playModeButton buttonC';
+    button.innerText = 'Clergy';
+    button.onclick = () => doTransition(
+        () => transitionToGame(
+            'Player',
+            'Challenge',
+            [
+                10, 6, 18, 14, 6, 10,
+                2, 2, 2, 2, 2, 2,
+                0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0,
+                3, 3, 3, 3, 3, 3,
+                11, 9, 19, 13, 9, 11
+            ],
+            false
+        )
+    );
+    contentElement.appendChild(button);
+
+    button = document.createElement('button');
+    button.className = 'playModeButton buttonF';
+    button.innerText = 'The Dragon';
+    button.onclick = () => doTransition(
+        () => transitionToGame(
+            'Player',
+            'Challenge',
+            [
+                10, 6, 18, 14, 6, 10,
+                2, 2, 2, 2, 2, 2,
+                0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0,
+                3, 3, 3, 3, 3, 3,
+                11, 7, 19, 17, 7, 11
+            ],
+            false
         )
     );
     contentElement.appendChild(button);
@@ -492,8 +681,6 @@ function transitionToTutorial() {
     contentElement.appendChild(button);
 
     document.getElementById('content').appendChild(contentElement);
-
-
 }
 
 export { loadBoard, transitionToGame, transitionToMain, doTransition };
