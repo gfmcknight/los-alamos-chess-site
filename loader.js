@@ -1,4 +1,5 @@
 import GameRunner from './runner.js';
+import tutorial from './tutorial.js'
 
 function getImageSource(pieceId) {
     switch (pieceId) {
@@ -217,6 +218,18 @@ function transitionToMain() {
     contentElement.className = 'menuHolder';
 
     let button = document.createElement('button');
+    button.className = 'playModeButton buttonExtra';
+    button.innerText = 'How to Play: Learn the Game.';
+    button.onclick = () => doTransition(
+        () => transitionToTutorial()
+    );
+    contentElement.appendChild(button);
+
+    contentElement.appendChild(
+        document.createTextNode('Pick your opponent')
+    );
+
+    button = document.createElement('button');
     button.className = 'playModeButton buttonA';
     button.innerText = 'Confident: Plays worse when winning.';
     button.onclick = () => doTransition(
@@ -337,6 +350,150 @@ function transitionToMain() {
     contentElement.appendChild(button);
 
     document.getElementById('content').appendChild(contentElement);
+}
+
+function transitionToTutorial() {
+    let worker = new Worker('ai.js');
+
+    function createSegment(segment, onto) {
+        if (segment['image']) {
+            let holder = document.createElement('div');
+            holder.className = 'tutorialImageWrapper';
+            let image = document.createElement('img');
+            image.className = 'tutorialImage';
+            image.setAttribute('src', segment['image']);
+            holder.appendChild(image);
+            onto.appendChild(holder);
+        }
+
+        if (segment['title'])
+        {
+            let title = document.createElement('h2');
+            title.style = 'text-align: center;'
+            title.innerText = segment['title'];
+            onto.appendChild(title);
+        }
+
+        for (let part of segment['text']) {
+            let body = document.createTextNode(part);
+            onto.appendChild(body);
+            onto.appendChild(document.createElement('br'));
+            onto.appendChild(document.createElement('br'));
+        }
+
+        if (segment['board']) {
+            let board = Array.from(segment['board']);
+            let boardHandler = loadBoard();
+            boardHandler.setRenderOptions({ reverse: true });
+            boardHandler.renderBoard(board);
+            onto.appendChild(boardHandler.boardElement);
+            let selectedSquare = -1;
+            let legalMoves = [];
+            let resolve;
+
+            worker.addEventListener('message', result => {
+                if (resolve) {
+                    resolve(result.data);
+                    resolve = undefined;
+                }
+            });
+
+            boardHandler.onClick((x, y) => {
+                let sq = y * 6 + x;
+                if (selectedSquare != -1 && legalMoves.includes(sq)) {
+                    board[sq] = board[selectedSquare];
+                    board[selectedSquare] = 0;
+
+                    if ((board[sq] == 2 || board[sq] == 3) && (sq >= 30 || sq < 6)) {
+                        board[sq] += 12;
+                    }
+
+                    boardHandler.setHighlights([selectedSquare, sq]);
+                    legalMoves = [];
+                    selectedSquare = -1;
+                    boardHandler.renderBoard(board);
+                } else if ((board[sq] & 1) == 0 && board[sq] != 0) {
+                    selectedSquare = sq;
+                    let promise = new Promise(r => resolve = r);
+                    worker.postMessage(['getLegalMoves', board, sq]);
+                    promise.then(l => {
+                        boardHandler.setHighlights(l);
+                        legalMoves = l;
+                    });
+                } else {
+                    legalMoves = [];
+                    selectedSquare = -1;
+                    boardHandler.setHighlights([]);
+                }
+            })
+        }
+    }
+
+    let contentElement = document
+        .createElement('div');
+    contentElement.className = 'tutorial';
+
+    createSegment(tutorial.welcome, contentElement);
+    createSegment(tutorial.pawn, contentElement);
+    createSegment(tutorial.knight, contentElement);
+    createSegment(tutorial.rook, contentElement);
+    createSegment(tutorial.queen, contentElement);
+    createSegment(tutorial.king, contentElement);
+    createSegment(tutorial.check1, contentElement);
+    createSegment(tutorial.check2, contentElement);
+    createSegment(tutorial.moveon, contentElement);
+
+    let button = document.createElement('button');
+    button.className = 'playModeButton buttonB';
+    button.innerText = 'Careless: A beginner to play against.';
+    button.style.minHeight = '1in';
+    button.onclick = () => {
+        worker.terminate();
+        doTransition(
+            () => transitionToGame(
+                'Player',
+                'Careless',
+                [
+                    10, 6, 18, 14, 6, 10,
+                    2, 2, 2, 2, 2, 2,
+                    0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0,
+                    3, 3, 3, 3, 3, 3,
+                    11, 7, 19, 15, 7, 11
+                ],
+                true
+            )
+        );
+    };
+    contentElement.appendChild(button);
+
+    button = document.createElement('button');
+    button.className = 'playModeButton buttonD';
+    button.innerText = 'Casual: An expert going easy.';
+    button.style.minHeight = '1in';
+    button.onclick = () => {
+        worker.terminate();
+        doTransition(
+            () => transitionToGame(
+                'Player',
+                'Casual',
+                [
+                    10, 6, 18, 14, 6, 10,
+                    2, 2, 2, 2, 2, 2,
+                    0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0,
+                    3, 3, 3, 3, 3, 3,
+                    11, 7, 19, 15, 7, 11
+                ],
+                true
+            )
+        );
+    };
+    contentElement.appendChild(button);
+
+    document.getElementById('content').appendChild(contentElement);
+
+
 }
 
 export { loadBoard, transitionToGame, transitionToMain, doTransition };
