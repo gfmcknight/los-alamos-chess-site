@@ -121,6 +121,7 @@ export default {
 
     moveon: {
         text: [
+            "",
             "This has been a basic overview of the game, but the best way to learn is to jump in and play a game."
         ]
     }
