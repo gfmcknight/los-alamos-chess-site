@@ -83,9 +83,9 @@ class BoardHandler {
             }
 
             if (boardValues[i] === 0) {
-                elem.childNodes[0].hidden = true;
+                elem.childNodes[0].style = "visibility: hidden;";
             } else {
-                elem.childNodes[0].hidden = false;
+                elem.childNodes[0].style = "";
                 elem.childNodes[0].setAttribute('src', getImageSource(boardValues[i]));
             }
         }
@@ -139,7 +139,7 @@ function loadBoard() {
                 squareEl.style.backgroundColor = 'lightgray';
             }
             let image = document.createElement('img');
-            image.hidden = true;
+            image.style = "visibility: hidden;";
             image.className = 'pieceImg';
             squareEl.appendChild(image);
 
