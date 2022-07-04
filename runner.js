@@ -128,6 +128,8 @@ export default class GameRunner {
 
             if (this.status != 0 && this.canFlip) {
                 this.swapColors();
+            } else {
+                this.refreshColors();
             }
 
             this.boardHandler.renderBoard(this.board);
